@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
+
 import 'package:vape_store/common/global_data.dart';
+import 'package:vape_store/data/models/responses/product_detail_response_model.dart';
 
 class ProductItem extends StatelessWidget {
+  final ProductDetailResponseModelData dataProduct;
   const ProductItem({
-    super.key,
-  });
+    Key? key,
+    required this.dataProduct,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +41,12 @@ class ProductItem extends StatelessWidget {
                 height: 79,
                 width: 83,
                 decoration: BoxDecoration(
-                  color: Colors.amber,
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      '$urlBase${dataProduct.attributes!.productCover!.data!.attributes!.url!}',
+                    ),
+                  ),
                   border: Border.all(
                     width: 1,
                     color: colorBlack,
@@ -57,23 +68,19 @@ class ProductItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Regular fit slogan',
+                          dataProduct.attributes!.productName!,
                           style: poppinsBlack.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        Text(
-                          'Size L',
-                          style: poppinsBlack.copyWith(
-                            fontSize: 12,
-                            color: colorBlack.withOpacity(0.4),
-                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                     Text(
-                      'PKR 1,190',
+                      CurrencyFormat.convertToIdr(
+                          dataProduct.attributes!.productPrice!, 0),
                       style: poppinsBlack.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -86,50 +93,121 @@ class ProductItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(
-                    Icons.delete_outline_outlined,
-                    color: Color(0xffF60000),
+                  GestureDetector(
+                    onTap: () {
+                      context
+                          .read<CheckoutBloc>()
+                          .add(RemoveAllByIDFromCart(id: dataProduct.id!));
+                    },
+                    child: const Icon(
+                      Icons.delete_outline_outlined,
+                      color: Color(0xffF60000),
+                    ),
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
-                            color: colorBlack.withOpacity(0.4),
+                  BlocBuilder<CheckoutBloc, CheckoutState>(
+                    builder: (context, state) {
+                      if (state is CheckoutLoaded) {
+                        final countItem = state.items
+                            .where((element) => element.id == dataProduct.id)
+                            .length;
+                        return Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                context.read<CheckoutBloc>().add(
+                                    RemoveFromCartEvent(data: dataProduct));
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: colorBlack.withOpacity(0.4),
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    5,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.remove,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 9),
+                              child: Text(
+                                countItem.toString(),
+                                style: poppinsBlack.copyWith(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                context
+                                    .read<CheckoutBloc>()
+                                    .add(AddToCartEvent(data: dataProduct));
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: colorBlack.withOpacity(0.4),
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    5,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.add,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: colorBlack.withOpacity(0.4),
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                5,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.remove,
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(
-                            5,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 9),
+                            child: Text(
+                              '2',
+                              style: poppinsBlack.copyWith(
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: const Icon(
-                          Icons.remove,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 9),
-                        child: Text(
-                          '2',
-                          style: poppinsBlack.copyWith(
-                            fontSize: 16,
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 1,
+                                color: colorBlack.withOpacity(0.4),
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                5,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                            ),
                           ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            width: 1,
-                            color: colorBlack.withOpacity(0.4),
-                          ),
-                          borderRadius: BorderRadius.circular(
-                            5,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.add,
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ],
               )

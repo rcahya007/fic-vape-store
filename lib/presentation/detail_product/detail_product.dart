@@ -1,11 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/detail_product/detail_product_bloc.dart';
+
 import 'package:vape_store/common/global_data.dart';
+import 'package:vape_store/data/models/responses/product_detail_response_model.dart';
 import 'package:vape_store/presentation/detail_product/widgets/bottom_nav_bar_detail_product.dart';
 import 'package:vape_store/presentation/detail_product/widgets/detail_image_product.dart';
 import 'package:vape_store/presentation/detail_product/widgets/top_bar_detail_product.dart';
 
-class DetailProduct extends StatelessWidget {
-  const DetailProduct({super.key});
+class DetailProduct extends StatefulWidget {
+  final int idProduct;
+  const DetailProduct({
+    Key? key,
+    required this.idProduct,
+  }) : super(key: key);
+
+  @override
+  State<DetailProduct> createState() => _DetailProductState();
+}
+
+class _DetailProductState extends State<DetailProduct> {
+  @override
+  void initState() {
+    context
+        .read<DetailProductBloc>()
+        .add(DoGetDetailProduct(id: widget.idProduct));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,79 +44,113 @@ class DetailProduct extends StatelessWidget {
                 height: 20,
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 25,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const DetailImageProduct(),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          'REGULAR FIT SLOGAN',
-                          style: poppinsBlack.copyWith(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
+                child: BlocBuilder<DetailProductBloc, DetailProductState>(
+                  builder: (context, state) {
+                    if (state is DetailProductError) {
+                      return Center(
+                        child: Text(state.hasilError),
+                      );
+                    }
+
+                    if (state is DetailProductLoaded) {
+                      final ProductDetailResponseModelData product =
+                          state.data.data!;
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 25,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              DetailImageProduct(
+                                  urlImage: product.attributes!.productCover!
+                                      .data!.attributes!.url!),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                product.attributes!.productName!,
+                                style: poppinsBlack.copyWith(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 7,
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(
+                                    width: 3,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '4.5/5',
+                                        style: poppinsBlack.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        '(45 reviews)',
+                                        style: poppinsBlack.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: colorBlack.withOpacity(0.4),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 21,
+                              ),
+                              Text(
+                                product.attributes!.productDescription!,
+                                style: poppinsBlack.copyWith(
+                                  fontSize: 16,
+                                  color: colorBlack.withOpacity(0.4),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 21,
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 7,
-                        ),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                              size: 24,
-                            ),
-                            const SizedBox(
-                              width: 3,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  '4.5/5',
-                                  style: poppinsBlack.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  '(45 reviews)',
-                                  style: poppinsBlack.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: colorBlack.withOpacity(0.4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 21,
-                        ),
-                        Text(
-                          'The name says it all, the right size slightly snugs the body leaving enough room for comfort in the sleeves and waist.',
-                          style: poppinsBlack.copyWith(
-                            fontSize: 16,
-                            color: colorBlack.withOpacity(0.4),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
                 ),
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const BottomNavBarDetailProduct(),
+      bottomNavigationBar: BlocBuilder<DetailProductBloc, DetailProductState>(
+        builder: (context, state) {
+          if (state is DetailProductLoaded) {
+            return BottomNavBarDetailProduct(
+                dataProduct: state.data.data!,
+                price: state.data.data!.attributes!.productPrice!);
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
   }
 }

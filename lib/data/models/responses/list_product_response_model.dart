@@ -1,5 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+// To parse this JSON data, do
+//
+//     final listProductResponseModel = listProductResponseModelFromJson(jsonString);
+
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 class ListProductResponseModel {
   List<Product>? data;
@@ -29,11 +35,21 @@ class ListProductResponseModel {
             : List<dynamic>.from(data!.map((x) => x.toJson())),
         "meta": meta?.toJson(),
       };
+
+  @override
+  bool operator ==(covariant ListProductResponseModel other) {
+    if (identical(this, other)) return true;
+
+    return listEquals(other.data, data) && other.meta == meta;
+  }
+
+  @override
+  int get hashCode => data.hashCode ^ meta.hashCode;
 }
 
 class Product {
   int? id;
-  Attributes? attributes;
+  DatumAttributes? attributes;
 
   Product({
     this.id,
@@ -48,7 +64,7 @@ class Product {
         id: json["id"],
         attributes: json["attributes"] == null
             ? null
-            : Attributes.fromJson(json["attributes"]),
+            : DatumAttributes.fromJson(json["attributes"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,7 +83,7 @@ class Product {
   int get hashCode => id.hashCode ^ attributes.hashCode;
 }
 
-class Attributes {
+class DatumAttributes {
   String? productName;
   String? productDescription;
   bool? isSold;
@@ -76,10 +92,10 @@ class Attributes {
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? publishedAt;
-  String? imageUrl;
+  int? productStock;
   ProductCover? productCover;
 
-  Attributes({
+  DatumAttributes({
     this.productName,
     this.productDescription,
     this.isSold,
@@ -88,16 +104,17 @@ class Attributes {
     this.createdAt,
     this.updatedAt,
     this.publishedAt,
-    this.imageUrl,
+    this.productStock,
     this.productCover,
   });
 
-  factory Attributes.fromRawJson(String str) =>
-      Attributes.fromJson(json.decode(str));
+  factory DatumAttributes.fromRawJson(String str) =>
+      DatumAttributes.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory Attributes.fromJson(Map<String, dynamic> json) => Attributes(
+  factory DatumAttributes.fromJson(Map<String, dynamic> json) =>
+      DatumAttributes(
         productName: json["product_name"],
         productDescription: json["product_description"],
         isSold: json["is_sold"],
@@ -114,7 +131,7 @@ class Attributes {
         publishedAt: json["publishedAt"] == null
             ? null
             : DateTime.parse(json["publishedAt"]),
-        imageUrl: json["image_url"],
+        productStock: json["product_stock"],
         productCover: json["product_cover"] == null
             ? null
             : ProductCover.fromJson(json["product_cover"]),
@@ -130,12 +147,12 @@ class Attributes {
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "publishedAt": publishedAt?.toIso8601String(),
-        "image_url": imageUrl,
+        "product_stock": productStock,
         "product_cover": productCover?.toJson(),
       };
 
   @override
-  bool operator ==(covariant Attributes other) {
+  bool operator ==(covariant DatumAttributes other) {
     if (identical(this, other)) return true;
 
     return other.productName == productName &&
@@ -146,7 +163,7 @@ class Attributes {
         other.createdAt == createdAt &&
         other.updatedAt == updatedAt &&
         other.publishedAt == publishedAt &&
-        other.imageUrl == imageUrl &&
+        other.productStock == productStock &&
         other.productCover == productCover;
   }
 
@@ -160,7 +177,7 @@ class Attributes {
         createdAt.hashCode ^
         updatedAt.hashCode ^
         publishedAt.hashCode ^
-        imageUrl.hashCode ^
+        productStock.hashCode ^
         productCover.hashCode;
   }
 }
@@ -184,6 +201,16 @@ class ProductCover {
   Map<String, dynamic> toJson() => {
         "data": data?.toJson(),
       };
+
+  @override
+  bool operator ==(covariant ProductCover other) {
+    if (identical(this, other)) return true;
+
+    return other.data == data;
+  }
+
+  @override
+  int get hashCode => data.hashCode;
 }
 
 class Data {
@@ -210,6 +237,16 @@ class Data {
         "id": id,
         "attributes": attributes?.toJson(),
       };
+
+  @override
+  bool operator ==(covariant Data other) {
+    if (identical(this, other)) return true;
+
+    return other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 class DataAttributes {
@@ -296,6 +333,48 @@ class DataAttributes {
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
       };
+
+  @override
+  bool operator ==(covariant DataAttributes other) {
+    if (identical(this, other)) return true;
+
+    return other.name == name &&
+        other.alternativeText == alternativeText &&
+        other.caption == caption &&
+        other.width == width &&
+        other.height == height &&
+        other.formats == formats &&
+        other.hash == hash &&
+        other.ext == ext &&
+        other.mime == mime &&
+        other.size == size &&
+        other.url == url &&
+        other.previewUrl == previewUrl &&
+        other.provider == provider &&
+        other.providerMetadata == providerMetadata &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt;
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^
+        alternativeText.hashCode ^
+        caption.hashCode ^
+        width.hashCode ^
+        height.hashCode ^
+        formats.hashCode ^
+        hash.hashCode ^
+        ext.hashCode ^
+        mime.hashCode ^
+        size.hashCode ^
+        url.hashCode ^
+        previewUrl.hashCode ^
+        provider.hashCode ^
+        providerMetadata.hashCode ^
+        createdAt.hashCode ^
+        updatedAt.hashCode;
+  }
 }
 
 class Formats {
@@ -322,6 +401,16 @@ class Formats {
         "thumbnail": thumbnail?.toJson(),
         "small": small?.toJson(),
       };
+
+  @override
+  bool operator ==(covariant Formats other) {
+    if (identical(this, other)) return true;
+
+    return other.thumbnail == thumbnail && other.small == small;
+  }
+
+  @override
+  int get hashCode => thumbnail.hashCode ^ small.hashCode;
 }
 
 class Small {
@@ -374,6 +463,34 @@ class Small {
         "size": size,
         "url": url,
       };
+
+  @override
+  bool operator ==(covariant Small other) {
+    if (identical(this, other)) return true;
+
+    return other.name == name &&
+        other.hash == hash &&
+        other.ext == ext &&
+        other.mime == mime &&
+        other.path == path &&
+        other.width == width &&
+        other.height == height &&
+        other.size == size &&
+        other.url == url;
+  }
+
+  @override
+  int get hashCode {
+    return name.hashCode ^
+        hash.hashCode ^
+        ext.hashCode ^
+        mime.hashCode ^
+        path.hashCode ^
+        width.hashCode ^
+        height.hashCode ^
+        size.hashCode ^
+        url.hashCode;
+  }
 }
 
 class Meta {
@@ -396,6 +513,16 @@ class Meta {
   Map<String, dynamic> toJson() => {
         "pagination": pagination?.toJson(),
       };
+
+  @override
+  bool operator ==(covariant Meta other) {
+    if (identical(this, other)) return true;
+
+    return other.pagination == pagination;
+  }
+
+  @override
+  int get hashCode => pagination.hashCode;
 }
 
 class Pagination {
@@ -429,4 +556,22 @@ class Pagination {
         "pageCount": pageCount,
         "total": total,
       };
+
+  @override
+  bool operator ==(covariant Pagination other) {
+    if (identical(this, other)) return true;
+
+    return other.page == page &&
+        other.pageSize == pageSize &&
+        other.pageCount == pageCount &&
+        other.total == total;
+  }
+
+  @override
+  int get hashCode {
+    return page.hashCode ^
+        pageSize.hashCode ^
+        pageCount.hashCode ^
+        total.hashCode;
+  }
 }

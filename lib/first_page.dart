@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
 
 class FirstPage extends StatefulWidget {
@@ -32,20 +34,70 @@ class _FirstPageState extends State<FirstPage> {
           ),
         ),
         child: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
+          items: [
+            const BottomNavigationBarItem(
               icon: Icon(Icons.home_outlined),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.favorite_outline_rounded),
               label: 'Saved',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.local_mall_outlined),
+              icon: SizedBox(
+                width: 50,
+                height: 35,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        height: 18,
+                        width: 18,
+                        decoration: BoxDecoration(
+                          color: _selectedIndex == 2
+                              ? colorBlack
+                              : colorBlack.withOpacity(0.4),
+                          borderRadius: BorderRadius.circular(
+                            20,
+                          ),
+                          border: Border.all(
+                            width: 2,
+                            color: colorWhite,
+                          ),
+                        ),
+                        child: BlocBuilder<CheckoutBloc, CheckoutState>(
+                          builder: (context, state) {
+                            if (state is CheckoutLoaded) {
+                              return Center(
+                                child: Text(
+                                  state.items.length.toString(),
+                                  style: poppinsWhite.copyWith(
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              );
+                            }
+                            return Center(
+                              child: Text(
+                                '0',
+                                style: poppinsWhite.copyWith(
+                                  fontSize: 10,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    const Center(child: Icon(Icons.local_mall_outlined)),
+                  ],
+                ),
+              ),
               label: 'Cart',
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               icon: Icon(Icons.settings),
               label: 'Settings',
             ),

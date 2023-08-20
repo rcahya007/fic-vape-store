@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vape_store/presentation/home/home_page.dart';
+import 'package:vape_store/presentation/my_cart/my_cart.dart';
 
 Color colorWhite = const Color(0xffffffff);
 Color colorBlack = const Color(0xff000000);
@@ -14,7 +16,18 @@ TextStyle poppinsWhite = GoogleFonts.poppins(
   color: colorWhite,
 );
 
-const String urlBase = 'http://192.168.0.29:1340';
+class CurrencyFormat {
+  static String convertToIdr(int number, int decimalDigit) {
+    NumberFormat currencFormat = NumberFormat.currency(
+      locale: 'id',
+      symbol: 'Rp. ',
+      decimalDigits: decimalDigit,
+    );
+    return currencFormat.format(number);
+  }
+}
+
+const String urlBase = 'https://fic6-strapi.opwarnet.my.id';
 
 class GlobalData {
   static final List widgetOptions = [
@@ -27,13 +40,8 @@ class GlobalData {
         ),
       ),
     ),
-    SafeArea(
-      child: Center(
-        child: Text(
-          'Index 2: Cart',
-          style: poppinsBlack.copyWith(fontSize: 40),
-        ),
-      ),
+    const SafeArea(
+      child: MyCart(),
     ),
     SafeArea(
       child: Center(

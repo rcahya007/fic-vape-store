@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vape_store/bloc/get_products/get_products_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
+import 'package:vape_store/data/models/responses/list_product_response_model.dart';
 import 'package:vape_store/presentation/detail_product/detail_product.dart';
 import 'package:vape_store/presentation/home/widgets/category_bar.dart';
 import 'package:vape_store/presentation/home/widgets/top_bar.dart';
@@ -55,6 +56,12 @@ class _HomePageState extends State<HomePage> {
                               }
 
                               if (state is GetProductsLoaded) {
+                                if (state.data.data!.isEmpty) {
+                                  return const Center(
+                                    child: Text('Data Kosong'),
+                                  );
+                                }
+
                                 return GridView.builder(
                                   physics: const ScrollPhysics(),
                                   shrinkWrap: true,
@@ -64,18 +71,21 @@ class _HomePageState extends State<HomePage> {
                                         2, // Atur sesuai kebutuhan Anda
                                     crossAxisSpacing: 20,
                                     mainAxisSpacing: 20,
-                                    mainAxisExtent: 230,
+                                    mainAxisExtent: 240,
                                   ),
                                   itemCount: state.data.data!
                                       .length, // Atur jumlah item di GridView
                                   itemBuilder: (context, index) {
+                                    final Product product =
+                                        state.data.data![index];
                                     return GestureDetector(
                                       onTap: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                const DetailProduct(),
+                                            builder: (context) => DetailProduct(
+                                              idProduct: product.id!,
+                                            ),
                                           ),
                                         );
                                       },
@@ -89,6 +99,12 @@ class _HomePageState extends State<HomePage> {
                                                 height: 174,
                                                 width: 161,
                                                 decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    fit: BoxFit.cover,
+                                                    image: NetworkImage(
+                                                      '$urlBase${product.attributes!.productCover!.data!.attributes!.url!}',
+                                                    ),
+                                                  ),
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                     10,
@@ -124,17 +140,22 @@ class _HomePageState extends State<HomePage> {
                                             height: 8,
                                           ),
                                           Text(
-                                            'REGULAR FIT SLOGAN',
+                                            product.attributes!.productName!,
                                             style: poppinsBlack.copyWith(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
                                             ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                           const SizedBox(
                                             height: 3,
                                           ),
                                           Text(
-                                            'PKR 1,190',
+                                            CurrencyFormat.convertToIdr(
+                                                product
+                                                    .attributes!.productPrice!,
+                                                0),
                                             style: poppinsBlack.copyWith(
                                               fontSize: 12,
                                               color:
@@ -148,7 +169,6 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 );
                               }
-
                               return const Center(
                                 child: CircularProgressIndicator(),
                               );
