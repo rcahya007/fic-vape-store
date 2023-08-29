@@ -28,6 +28,7 @@ class CurrencyFormat {
 }
 
 const String urlBase = 'https://fic6-strapi.opwarnet.my.id';
+// const String urlBase = 'http://192.168.0.29:1337';
 
 class GlobalData {
   static final List widgetOptions = [

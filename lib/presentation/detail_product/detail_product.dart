@@ -54,7 +54,7 @@ class _DetailProductState extends State<DetailProduct> {
 
                     if (state is DetailProductLoaded) {
                       final ProductDetailResponseModelData product =
-                          state.data.data!;
+                          state.data.data;
                       return SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -64,13 +64,13 @@ class _DetailProductState extends State<DetailProduct> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               DetailImageProduct(
-                                  urlImage: product.attributes!.productCover!
-                                      .data!.attributes!.url!),
+                                  urlImage: product.attributes.productCover.data
+                                      .attributes.url),
                               const SizedBox(
                                 height: 15,
                               ),
                               Text(
-                                product.attributes!.productName!,
+                                product.attributes.productName,
                                 style: poppinsBlack.copyWith(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w600,
@@ -114,7 +114,7 @@ class _DetailProductState extends State<DetailProduct> {
                                 height: 21,
                               ),
                               Text(
-                                product.attributes!.productDescription!,
+                                product.attributes.productDescription,
                                 style: poppinsBlack.copyWith(
                                   fontSize: 16,
                                   color: colorBlack.withOpacity(0.4),
@@ -142,8 +142,8 @@ class _DetailProductState extends State<DetailProduct> {
         builder: (context, state) {
           if (state is DetailProductLoaded) {
             return BottomNavBarDetailProduct(
-                dataProduct: state.data.data!,
-                price: state.data.data!.attributes!.productPrice!);
+                dataProduct: state.data.data,
+                price: state.data.data.attributes.productPrice);
           } else {
             return const Center(
               child: CircularProgressIndicator(),

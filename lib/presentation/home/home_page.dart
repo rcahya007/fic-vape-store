@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                                                   image: DecorationImage(
                                                     fit: BoxFit.cover,
                                                     image: NetworkImage(
-                                                      '$urlBase${product.attributes!.productCover!.data!.attributes!.url!}',
+                                                      '$urlBase${product.attributes!.productCover!.data!.attributes!.url}',
                                                     ),
                                                   ),
                                                   borderRadius:

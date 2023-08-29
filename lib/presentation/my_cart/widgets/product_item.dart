@@ -44,7 +44,7 @@ class ProductItem extends StatelessWidget {
                   image: DecorationImage(
                     fit: BoxFit.cover,
                     image: NetworkImage(
-                      '$urlBase${dataProduct.attributes!.productCover!.data!.attributes!.url!}',
+                      '$urlBase${dataProduct.attributes.productCover.data.attributes.url}',
                     ),
                   ),
                   border: Border.all(
@@ -68,7 +68,7 @@ class ProductItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          dataProduct.attributes!.productName!,
+                          dataProduct.attributes.productName,
                           style: poppinsBlack.copyWith(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -80,7 +80,7 @@ class ProductItem extends StatelessWidget {
                     ),
                     Text(
                       CurrencyFormat.convertToIdr(
-                          dataProduct.attributes!.productPrice!, 0),
+                          dataProduct.attributes.productPrice, 0),
                       style: poppinsBlack.copyWith(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -97,7 +97,7 @@ class ProductItem extends StatelessWidget {
                     onTap: () {
                       context
                           .read<CheckoutBloc>()
-                          .add(RemoveAllByIDFromCart(id: dataProduct.id!));
+                          .add(RemoveAllByIDFromCart(id: dataProduct.id));
                     },
                     child: const Icon(
                       Icons.delete_outline_outlined,

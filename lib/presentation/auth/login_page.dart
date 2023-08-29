@@ -98,8 +98,6 @@ class _LoginPageState extends State<LoginPage> {
                       }
                       return ActionButton(
                         callback: () {
-                          print(_signInFormKey.currentState!.validate());
-                          print(passwordC.text);
                           if (_signInFormKey.currentState!.validate()) {
                             final model = LoginRequestModel(
                               identifier: emailC.text,

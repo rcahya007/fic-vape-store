@@ -1,157 +1,180 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
+import 'package:vape_store/bloc/data_checkout/data_checkout_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
+import 'package:vape_store/presentation/checkout/widgets/courir_destination.dart';
+import 'package:vape_store/presentation/checkout/widgets/product_item_cart.dart';
 
-class CheckoutPage extends StatefulWidget {
+class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
 
   @override
-  State<CheckoutPage> createState() => _CheckoutPageState();
-}
-
-class _CheckoutPageState extends State<CheckoutPage> {
-  @override
   Widget build(BuildContext context) {
+    TextEditingController controllerAlamat = TextEditingController();
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Checkout Page'),
+        backgroundColor: colorWhite,
+        forceMaterialTransparency: true,
       ),
-      body: SafeArea(
+      body: WillPopScope(
+        onWillPop: () async {
+          context
+              .read<DataCheckoutBloc>()
+              .add(GetDataCheckoutEvent(key: 'discount_persen', value: 0));
+          context
+              .read<DataCheckoutBloc>()
+              .add(GetDataCheckoutEvent(key: 'ongkir', value: 0));
+          context
+              .read<DataCheckoutBloc>()
+              .add(GetDataCheckoutEvent(key: 'shipping_address', value: ''));
+          return true;
+        },
+        child: SafeArea(
           child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 10,
-            bottom: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 10,
+                bottom: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Shopping Cart',
-                    style: poppinsBlack.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.shopping_cart_outlined,
-                        color: Colors.blue[400],
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
                       Text(
-                        'Keep Shoping',
+                        'Shopping Cart',
                         style: poppinsBlack.copyWith(
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: Colors.blue[400],
                         ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.shopping_cart_outlined,
+                            color: Colors.blue[400],
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            'Keep Shoping',
+                            style: poppinsBlack.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: Colors.blue[400],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          right: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.yellow),
-                            height: 50,
-                            width: 50,
-                          ),
-                        ),
-                        Positioned(
-                          right: 25,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.blue),
-                            height: 50,
-                            width: 50,
-                          ),
-                        ),
-                        Positioned(
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Colors.red),
-                            height: 50,
-                            width: 50,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                   const SizedBox(
-                    width: 10,
+                    height: 15,
                   ),
-                  Expanded(
-                    child: Text(
-                      'Your Items: Hola1, Hola 2, Hola 3, Hola 2, Hola 3, Hola 2, Hola 3',
-                      style: poppinsBlack.copyWith(
-                        fontSize: 16,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  BlocBuilder<CheckoutBloc, CheckoutState>(
+                    builder: (context, state) {
+                      if (state is CheckoutLoaded) {
+                        final uniqItem = state.items.toSet().length;
+                        final dataSet = state.items.toSet();
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: uniqItem,
+                          itemBuilder: (context, index) {
+                            return ProductItemCart(
+                                dataProduct: dataSet.elementAt(index));
+                          },
+                        );
+                      }
+                      return Center(
+                          child: Text(
+                        'Data anda kosong',
+                        style: poppinsBlack,
+                      ));
+                    },
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Shipping Address',
-                    style: poppinsBlack.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: 15,
                   ),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Change',
+                        'Shipping Address',
                         style: poppinsBlack.copyWith(
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: Colors.blue[400],
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Change',
+                            style: poppinsBlack.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: Colors.blue[400],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  TextField(
+                    style: poppinsBlack,
+                    controller: controllerAlamat,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      hintText: 'Masukkan alamat anda',
+                      hintStyle: poppinsBlack.copyWith(
+                        color: colorBlack.withOpacity(0.4),
+                      ),
+                    ),
+                    onSubmitted: (value) {
+                      context.read<DataCheckoutBloc>().add(GetDataCheckoutEvent(
+                          key: 'shipping_address', value: value));
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select Courir and Destination',
+                        style: poppinsBlack.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
                   ),
+                  const CourirDestination(),
                 ],
               ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text('Bla bla bla ')
-            ],
+            ),
           ),
         ),
-      )),
+      ),
     );
   }
 }

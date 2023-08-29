@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/add_voucher/add_voucher_bloc.dart';
+import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
+import 'package:vape_store/bloc/data_checkout/data_checkout_bloc.dart';
+import 'package:vape_store/bloc/get_kota_asal/get_kota_asal_bloc.dart';
+import 'package:vape_store/bloc/get_kota_tujuan/get_kota_tujuan_bloc.dart';
+import 'package:vape_store/bloc/get_provinsi_asal/get_provinsi_asal_bloc.dart';
+import 'package:vape_store/bloc/get_provinsi_tujuan/get_provinsi_tujuan_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
 import 'package:vape_store/data/datasources/auth_local_datasource.dart';
+import 'package:vape_store/data/models/request/order_request_model.dart';
+import 'package:vape_store/data/models/responses/product_detail_response_model.dart';
 import 'package:vape_store/presentation/auth/login_page.dart';
 import 'package:vape_store/presentation/checkout/checkout_page.dart';
 
@@ -14,68 +24,122 @@ class BottomNavBarMyCart extends StatelessWidget {
     return BottomAppBar(
       elevation: 0,
       padding: const EdgeInsets.all(0),
-      height: 100,
+      height: 70,
       color: Colors.white,
-      child: GestureDetector(
-        onTap: () async {
-          final signIn = await AuthLocalDatasource().isLogin();
-          if (signIn) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CheckoutPage(),
-                ));
-          } else {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
-                ));
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 22,
-            vertical: 25,
-          ),
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                width: 1,
-                color: Colors.black.withOpacity(0.4),
-              ),
-            ),
-          ),
-          child: Container(
-            height: 58,
-            width: 341,
-            decoration: BoxDecoration(
-              color: colorBlack,
-              borderRadius: BorderRadius.circular(
-                10,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Checkout',
-                  style: poppinsWhite.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+      child: BlocBuilder<CheckoutBloc, CheckoutState>(
+        builder: (context, state) {
+          if (state is CheckoutLoaded) {
+            return GestureDetector(
+              onTap: () async {
+                final signIn = await AuthLocalDatasource().isLogin();
+                // For IdProduct
+                final idProduct =
+                    state.items.map((e) => IdProduct(id: e.id)).toList();
+                final items = state.items
+                    .map((e) => ProductDetailResponseModelData(
+                        id: e.id, attributes: e.attributes))
+                    .toList();
+                if (signIn && state.items.isNotEmpty) {
+                  print('Pergi Ke Checkout Page');
+                  if (context.mounted) {
+                    context
+                        .read<GetProvinsiAsalBloc>()
+                        .add(DoGetProvinsiAsalEvent());
+                    context
+                        .read<GetProvinsiTujuanBloc>()
+                        .add(DoGetProvinsiTujuanEvent());
+                    context
+                        .read<GetKotaAsalBloc>()
+                        .add(DoRemoveKotaAsalEvent());
+                    context
+                        .read<GetKotaTujuanBloc>()
+                        .add(DoRemoveKotaTujuanEvent());
+                    context.read<AddVoucherBloc>().add(RemoveVoucherEvent());
+                    context.read<DataCheckoutBloc>().add(
+                          GetDataCheckoutEvent(
+                            key: 'id_products',
+                            value: idProduct,
+                          ),
+                        );
+                    context.read<DataCheckoutBloc>().add(
+                          GetDataCheckoutEvent(
+                            key: 'items',
+                            value: items,
+                          ),
+                        );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CheckoutPage(),
+                      ),
+                    );
+                  }
+                } else if (signIn && state.items.isEmpty) {
+                  print('Cart Kosong');
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Keranjang anda masih kosong'),
+                    ),
+                  );
+                } else {
+                  print('Pergi Ke Login Page karena belom login');
+                  if (context.mounted) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ));
+                  }
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      width: 1,
+                      color: Colors.black.withOpacity(0.4),
+                    ),
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
+                child: Container(
+                  height: 58,
+                  width: 341,
+                  decoration: BoxDecoration(
+                    color: colorBlack,
+                    borderRadius: BorderRadius.circular(
+                      10,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Checkout',
+                        style: poppinsWhite.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Icon(
+                        Icons.arrow_forward_outlined,
+                        color: colorWhite,
+                      )
+                    ],
+                  ),
                 ),
-                Icon(
-                  Icons.arrow_forward_outlined,
-                  color: colorWhite,
-                )
-              ],
-            ),
-          ),
-        ),
+              ),
+            );
+          }
+          return Container();
+        },
       ),
     );
   }
