@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                                         2, // Atur sesuai kebutuhan Anda
                                     crossAxisSpacing: 20,
                                     mainAxisSpacing: 20,
-                                    mainAxisExtent: 240,
+                                    mainAxisExtent: 260,
                                   ),
                                   itemCount: state.data.data!
                                       .length, // Atur jumlah item di GridView

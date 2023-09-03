@@ -12,6 +12,7 @@ import 'package:vape_store/bloc/get_provinsi_asal/get_provinsi_asal_bloc.dart';
 import 'package:vape_store/bloc/get_provinsi_tujuan/get_provinsi_tujuan_bloc.dart';
 import 'package:vape_store/bloc/login/login_bloc.dart';
 import 'package:vape_store/bloc/order/order_bloc.dart';
+import 'package:vape_store/bloc/register/register_bloc.dart';
 import 'package:vape_store/data/datasources/auth_remote_datasource.dart';
 import 'package:vape_store/data/datasources/order_remote_datasource.dart';
 import 'package:vape_store/data/datasources/product_remote_datasource.dart';
@@ -65,7 +66,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => OrderBloc(OrderRemoteDatasource()),
-        )
+        ),
+        BlocProvider(
+          create: (context) => RegisterBloc(AuthRemoteDatasource()),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

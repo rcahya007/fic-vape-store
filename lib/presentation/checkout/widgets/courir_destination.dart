@@ -23,9 +23,6 @@ class CourirDestination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // DataCheckoutCubit checkoutData =
-    //     BlocProvider.of<DataCheckoutCubit>(context);
-
     TextEditingController controllerProvinsiAsal = TextEditingController();
     TextEditingController controllerKotaAsal = TextEditingController();
     TextEditingController controllerProvinsiTujuan = TextEditingController();
@@ -39,9 +36,7 @@ class CourirDestination extends StatelessWidget {
     final focusNode = FocusNode();
 
     void showBiayaKurir() {
-      if (controllerProvinsiAsal.text.isNotEmpty &&
-          controllerKotaAsal.text.isNotEmpty &&
-          controllerProvinsiTujuan.text.isNotEmpty &&
+      if (controllerProvinsiTujuan.text.isNotEmpty &&
           controllerKotaTujuan.text.isNotEmpty &&
           controllerBeratBarang.text.isNotEmpty &&
           controllerCourirPick.text.isNotEmpty) {
