@@ -46,6 +46,21 @@ class MyCart extends StatelessWidget {
                             context.read<DataCheckoutBloc>().add(
                                 GetDataCheckoutEvent(
                                     key: 'total', value: subTotal + 1000));
+
+                            if (state.items.isEmpty) {
+                              return SizedBox(
+                                height: 600,
+                                child: Center(
+                                  child: Text(
+                                    'Cart is Empty',
+                                    style: poppinsBlack.copyWith(
+                                      fontSize: 35,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
                             return Column(
                               children: [
                                 ListView.builder(

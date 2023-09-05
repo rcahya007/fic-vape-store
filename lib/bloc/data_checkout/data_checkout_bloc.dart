@@ -14,8 +14,18 @@ class DataCheckoutBloc extends Bloc<DataCheckoutEvent, DataCheckoutState> {
           'subTotal': 0,
           'total': 0,
           'berat_barang': 0,
-          'provinsi_asal': {},
-          'kota_asal': {},
+          'provinsi_asal': {
+            "province_id": 11,
+            "province": "Jawa Timur",
+          },
+          "kota_asal": {
+            "city_id": "409",
+            "province_id": "11",
+            "province": "Jawa Timur",
+            "type": "Kabupaten",
+            "city_name": "Sidoarjo",
+            "postal_code": "61219"
+          },
           'shipping_address': '',
           'voucher': VoucherData(),
           'provinsi_tujuan': {},

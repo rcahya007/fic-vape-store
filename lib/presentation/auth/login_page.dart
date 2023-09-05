@@ -75,19 +75,35 @@ class _LoginPageState extends State<LoginPage> {
                     listener: (context, state) async {
                       if (state is LoginLoaded) {
                         await AuthLocalDatasource().saveAuthData(state.model);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FirstPage(),
-                          ),
-                        );
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(
+                                seconds: 1,
+                              ),
+                              content: Text(
+                                  'Selamat datang ${state.model.user.username}'),
+                            ),
+                          );
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FirstPage(),
+                            ),
+                          );
+                        }
                       }
                       if (state is LoginError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Login gagal, check data anda '),
-                          ),
-                        );
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              duration: Duration(
+                                seconds: 1,
+                              ),
+                              content: Text('Login gagal, check data anda'),
+                            ),
+                          );
+                        }
                       }
                     },
                     builder: (context, state) {

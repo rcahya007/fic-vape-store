@@ -33,4 +33,18 @@ class ProductRemoteDatasource {
       return Left(response.statusCode.toString());
     }
   }
+
+  Future<Either<String, ProductDetailResponseModel>> search(String name) async {
+    final response = await http.get(
+      Uri.parse('$urlBase/api/products?filter[roduct_name][\$contains]=$name'),
+    );
+
+    if (response.statusCode == 200) {
+      return Right(
+        ProductDetailResponseModel.fromRawJson(response.body),
+      );
+    } else {
+      return Left(response.statusCode.toString());
+    }
+  }
 }

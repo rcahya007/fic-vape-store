@@ -15,8 +15,11 @@ class TopBarDetailProduct extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.arrow_back,
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: const Icon(
+              Icons.arrow_back,
+            ),
           ),
           Expanded(
             child: Center(

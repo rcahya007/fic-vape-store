@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/register/register_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
+import 'package:vape_store/data/datasources/auth_local_datasource.dart';
+import 'package:vape_store/data/models/request/register_request_model.dart';
+import 'package:vape_store/first_page.dart';
 import 'package:vape_store/presentation/auth/login_page.dart';
 import 'package:vape_store/presentation/auth/widgets/action_button.dart';
 import 'package:vape_store/presentation/auth/widgets/auth_text_field.dart';
@@ -12,6 +17,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _registerKey = GlobalKey<FormState>();
   final TextEditingController fullnameC = TextEditingController();
   final TextEditingController emailC = TextEditingController();
   final TextEditingController passwordC = TextEditingController();
@@ -47,40 +53,91 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(
               height: 35,
             ),
-            AuthTextField(
-              nameText: 'Full name',
-              hintText: 'Enter your full name',
-              isObsecure: false,
-              isPassword: false,
-              controller: fullnameC,
-            ),
-            AuthTextField(
-              nameText: 'Email',
-              hintText: 'Enter your email address',
-              isObsecure: false,
-              isPassword: false,
-              controller: emailC,
-            ),
-            AuthTextField(
-              nameText: 'Password',
-              hintText: 'Enter your password',
-              isObsecure: true,
-              isPassword: true,
-              controller: passwordC,
-            ),
-            ActionButton(
-              callback: () {},
-              color: colorBlack,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            Form(
+              key: _registerKey,
+              child: Column(
                 children: [
-                  Text(
-                    'Sign Up',
-                    style: poppinsWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
+                  AuthTextField(
+                    nameText: 'Full name',
+                    hintText: 'Enter your full name',
+                    isObsecure: false,
+                    isPassword: false,
+                    controller: fullnameC,
+                  ),
+                  AuthTextField(
+                    nameText: 'Email',
+                    hintText: 'Enter your email address',
+                    isObsecure: false,
+                    isPassword: false,
+                    controller: emailC,
+                  ),
+                  AuthTextField(
+                    nameText: 'Password',
+                    hintText: 'Enter your password',
+                    isObsecure: true,
+                    isPassword: true,
+                    controller: passwordC,
+                  ),
+                  BlocConsumer<RegisterBloc, RegisterState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                          orElse: () {},
+                          error: (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Register Error'),
+                              ),
+                            );
+                          },
+                          loaded: (model) async {
+                            await AuthLocalDatasource().saveAuthData(model);
+                            if (mounted) {
+                              Navigator.pushReplacement(context,
+                                  MaterialPageRoute(
+                                builder: (context) {
+                                  return const FirstPage();
+                                },
+                              ));
+                            }
+                          });
+                    },
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () {
+                          return ActionButton(
+                            callback: () {
+                              if (_registerKey.currentState!.validate()) {
+                                final requestModel = RegisterRequestModel(
+                                  username: fullnameC.text,
+                                  email: emailC.text,
+                                  password: passwordC.text,
+                                );
+                                context
+                                    .read<RegisterBloc>()
+                                    .add(RegisterEvent.register(requestModel));
+                              }
+                            },
+                            color: colorBlack,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Sign Up',
+                                  style: poppinsWhite.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

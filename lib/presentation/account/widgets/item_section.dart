@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:vape_store/common/global_data.dart';
 
+// ignore: must_be_immutable
 class ItemSection extends StatelessWidget {
   String name;
   VoidCallback onTap;
@@ -16,21 +17,21 @@ class ItemSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            name,
-            style: poppinsBlack.copyWith(
-              fontSize: 18,
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              name,
+              style: poppinsBlack.copyWith(
+                fontSize: 18,
+              ),
             ),
           ),
-        ),
-        IconButton(
-          icon: icon,
-          onPressed: onTap,
-        )
-      ],
+          icon,
+        ],
+      ),
     );
   }
 }

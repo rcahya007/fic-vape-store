@@ -27,4 +27,11 @@ class AuthLocalDatasource {
     final authJson = pref.getString('auth');
     return authJson != null;
   }
+
+  Future<User> getUser() async {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    final authJson = pref.getString('auth') ?? '';
+    final authData = AuthResponseModel.fromJson(jsonDecode(authJson));
+    return authData.user;
+  }
 }

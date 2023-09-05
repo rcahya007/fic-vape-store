@@ -23,3 +23,5 @@ class RemoveAllByIDFromCart extends CheckoutEvent {
     required this.id,
   });
 }
+
+class RemoveAllFromCartEvent extends CheckoutEvent {}

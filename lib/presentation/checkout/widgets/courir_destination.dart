@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vape_store/bloc/biaya_courir/biaya_courir_bloc.dart';
 import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
 import 'package:vape_store/bloc/data_checkout/data_checkout_bloc.dart';
-import 'package:vape_store/bloc/get_kota_asal/get_kota_asal_bloc.dart';
 import 'package:vape_store/bloc/get_kota_tujuan/get_kota_tujuan_bloc.dart';
-import 'package:vape_store/bloc/get_provinsi_asal/get_provinsi_asal_bloc.dart';
 import 'package:vape_store/bloc/get_provinsi_tujuan/get_provinsi_tujuan_bloc.dart';
 import 'package:vape_store/bloc/order/order_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
@@ -23,14 +21,12 @@ class CourirDestination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controllerProvinsiAsal = TextEditingController();
-    TextEditingController controllerKotaAsal = TextEditingController();
     TextEditingController controllerProvinsiTujuan = TextEditingController();
     TextEditingController controllerKotaTujuan = TextEditingController();
     TextEditingController controllerBeratBarang = TextEditingController();
     TextEditingController controllerCourirPick = TextEditingController();
     bool isAcc = false;
-    late String idKotaAsal;
+    String idKotaAsal = "409";
     late String idKotaTujuan;
     late String codeCourir;
     final focusNode = FocusNode();
@@ -57,278 +53,6 @@ class CourirDestination extends StatelessWidget {
       children: [
         const SizedBox(
           height: 15,
-        ),
-        // PROVINSI ASAL
-        BlocBuilder<GetProvinsiAsalBloc, GetProvinsiAsalState>(
-          builder: (context, state) {
-            if (state is GetProvinsiAsalLoading) {
-              return DropdownSearch<ProvinsiModelResponse>(
-                enabled: false,
-                popupProps: PopupProps.dialog(
-                  dialogProps: const DialogProps(
-                      backgroundColor: Colors.white,
-                      contentPadding: EdgeInsets.all(
-                        10,
-                      )),
-                  showSearchBox: true,
-                  searchFieldProps: TextFieldProps(
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Provinsi Asal',
-                      hintText: 'Cari Provinsi Asal',
-                      hintStyle: poppinsBlack.copyWith(
-                          color: colorBlack.withOpacity(0.4)),
-                      labelStyle: poppinsBlack,
-                    ),
-                  ),
-                ),
-                dropdownDecoratorProps: DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: "Provinsi Asal",
-                      labelStyle: poppinsBlack.copyWith(
-                          color: colorBlack.withOpacity(0.4))),
-                ),
-              );
-            }
-            if (state is GetProvinsiAsalLoaded) {
-              return DropdownSearch<ProvinsiModelResponse>(
-                clearButtonProps: const ClearButtonProps(
-                  isVisible: true,
-                ),
-                popupProps: PopupProps.dialog(
-                  dialogProps: const DialogProps(
-                      backgroundColor: Colors.white,
-                      contentPadding: EdgeInsets.all(
-                        10,
-                      )),
-                  showSearchBox: true,
-                  searchFieldProps: TextFieldProps(
-                    controller: controllerProvinsiAsal,
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Provinsi Asal',
-                      hintText: 'Cari Provinsi Asal',
-                      labelStyle: poppinsBlack,
-                      hintStyle: poppinsBlack.copyWith(
-                        color: colorBlack.withOpacity(0.4),
-                      ),
-                    ),
-                  ),
-                ),
-                items: state.dataProvinsi,
-                itemAsString: (item) => item.province,
-                dropdownDecoratorProps: DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: "Provinsi Asal",
-                    labelStyle: poppinsBlack,
-                  ),
-                ),
-                onChanged: (value) {
-                  if (value != null) {
-                    controllerKotaAsal.clear();
-                    controllerProvinsiAsal.text = value.province;
-                    context
-                        .read<GetKotaAsalBloc>()
-                        .add(DoGetKotaAsalEvent(int.parse(value.provinceId)));
-                    context.read<DataCheckoutBloc>().add(GetDataCheckoutEvent(
-                            key: 'provinsi_asal',
-                            value: {
-                              'province_id': int.parse(value.provinceId),
-                              'province': value.province
-                            }));
-                    showBiayaKurir();
-                  } else {
-                    print('Tidak memilih provinsi apapun');
-                    context
-                        .read<GetKotaAsalBloc>()
-                        .add(DoRemoveKotaAsalEvent());
-                    controllerProvinsiAsal.clear();
-                    controllerKotaAsal.clear();
-                    idKotaAsal = '';
-                    print(controllerKotaAsal.value.text);
-                    context.read<DataCheckoutBloc>().add(
-                        GetDataCheckoutEvent(key: 'provinsi_asal', value: {}));
-                    context
-                        .read<DataCheckoutBloc>()
-                        .add(GetDataCheckoutEvent(key: 'kota_asal', value: {}));
-                    showBiayaKurir();
-                  }
-                },
-              );
-            }
-            return DropdownSearch<ProvinsiModelResponse>(
-              enabled: false,
-              popupProps: PopupProps.dialog(
-                dialogProps: const DialogProps(
-                    backgroundColor: Colors.white,
-                    contentPadding: EdgeInsets.all(
-                      10,
-                    )),
-                showSearchBox: true,
-                searchFieldProps: TextFieldProps(
-                  autocorrect: true,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Provinsi Asal',
-                    hintText: 'Cari Provinsi Asal',
-                    labelStyle: poppinsBlack,
-                    hintStyle: poppinsBlack.copyWith(
-                      color: colorBlack.withOpacity(0.4),
-                    ),
-                  ),
-                ),
-              ),
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: "Provinsi Asal",
-                  labelStyle: poppinsBlack,
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(
-          height: 25,
-        ),
-        // KOTA ASAL
-        BlocBuilder<GetKotaAsalBloc, GetKotaAsalState>(
-          builder: (context, state) {
-            if (state is GetKotaAsalLoading) {
-              return DropdownSearch<KotaModelResponse>(
-                enabled: false,
-                itemAsString: (item) => '',
-                popupProps: PopupProps.dialog(
-                  dialogProps: const DialogProps(
-                      backgroundColor: Colors.white,
-                      contentPadding: EdgeInsets.all(
-                        10,
-                      )),
-                  showSearchBox: true,
-                  searchFieldProps: TextFieldProps(
-                    controller: controllerKotaAsal,
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Kota Asal',
-                      hintText: 'Cari Kota Asal',
-                      labelStyle: poppinsBlack.copyWith(
-                        color: colorBlack.withOpacity(0.4),
-                      ),
-                      hintStyle: poppinsBlack.copyWith(
-                        color: colorBlack.withOpacity(0.4),
-                      ),
-                    ),
-                  ),
-                ),
-                dropdownDecoratorProps: DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: "Kota Asal",
-                    labelStyle: poppinsBlack.copyWith(
-                      color: colorBlack.withOpacity(0.4),
-                    ),
-                  ),
-                ),
-              );
-            }
-            if (state is GetKotaAsalLoaded) {
-              return DropdownSearch<KotaModelResponse>(
-                clearButtonProps: const ClearButtonProps(
-                  isVisible: true,
-                ),
-                popupProps: PopupProps.dialog(
-                  dialogProps: const DialogProps(
-                      backgroundColor: Colors.white,
-                      contentPadding: EdgeInsets.all(
-                        10,
-                      )),
-                  showSearchBox: true,
-                  searchFieldProps: TextFieldProps(
-                    controller: controllerKotaAsal,
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: 'Kota Asal',
-                      hintText: 'Cari Kota Asal',
-                      labelStyle: poppinsBlack,
-                      hintStyle: poppinsBlack.copyWith(
-                        color: colorBlack.withOpacity(0.4),
-                      ),
-                    ),
-                  ),
-                ),
-                items: state.dataKota,
-                itemAsString: (item) => '${item.type} ${item.cityName}',
-                dropdownDecoratorProps: DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: "Kota Asal",
-                    labelStyle: poppinsBlack,
-                  ),
-                ),
-                onChanged: (value) {
-                  if (value != null) {
-                    controllerKotaAsal.text = '${value.type} ${value.cityName}';
-                    idKotaAsal = value.cityId;
-                    context.read<DataCheckoutBloc>().add(GetDataCheckoutEvent(
-                        key: 'kota_asal', value: value.toJson()));
-                    showBiayaKurir();
-                  } else {
-                    print('Tidak memilih Kota Asal apapun');
-                    controllerKotaAsal.clear();
-                    idKotaAsal = '';
-                    context
-                        .read<DataCheckoutBloc>()
-                        .add(GetDataCheckoutEvent(key: 'kota_asal', value: {}));
-                    showBiayaKurir();
-                  }
-                },
-              );
-            }
-            return DropdownSearch<KotaModelResponse>(
-              enabled: false,
-              popupProps: PopupProps.dialog(
-                dialogProps: const DialogProps(
-                    backgroundColor: Colors.white,
-                    contentPadding: EdgeInsets.all(
-                      10,
-                    )),
-                showSearchBox: true,
-                searchFieldProps: TextFieldProps(
-                  controller: controllerKotaAsal,
-                  autocorrect: true,
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Kota Asal',
-                    hintText: 'Cari Kota Asal',
-                    labelStyle: poppinsBlack.copyWith(
-                      color: colorBlack.withOpacity(0.4),
-                    ),
-                    hintStyle: poppinsBlack.copyWith(
-                      color: colorBlack.withOpacity(0.4),
-                    ),
-                  ),
-                ),
-              ),
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: "Kota Asal",
-                  labelStyle: poppinsBlack.copyWith(
-                    color: colorBlack.withOpacity(0.4),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        const SizedBox(
-          height: 25,
         ),
         // PROVINSI TUJUAN
         BlocBuilder<GetProvinsiTujuanBloc, GetProvinsiTujuanState>(
@@ -1018,7 +742,8 @@ class CourirDestination extends StatelessWidget {
             state.maybeWhen(
               orElse: () {},
               loaded: (model) {
-                Navigator.push(context, MaterialPageRoute(
+                context.read<CheckoutBloc>().add(RemoveAllFromCartEvent());
+                Navigator.pushReplacement(context, MaterialPageRoute(
                   builder: (context) {
                     return SnapWidget(url: model.redirectUrl);
                   },

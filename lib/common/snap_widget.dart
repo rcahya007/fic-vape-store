@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vape_store/presentation/payment/payment_failed_page.dart';
+import 'package:vape_store/presentation/payment/payment_pending_page.dart';
 import 'package:vape_store/presentation/payment/payment_success_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -27,6 +28,14 @@ class _SnapWidgetState extends State<SnapWidget> {
           //
         },
         onPageStarted: (String url) {
+          print(url);
+          if (url.contains('status_code=201&transaction_status=pending')) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PaymentPendingPage(),
+                ));
+          }
           if (url.contains('status_code=202&transaction_status=deny')) {
             Navigator.push(
                 context,

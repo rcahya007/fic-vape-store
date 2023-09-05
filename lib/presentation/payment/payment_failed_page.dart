@@ -35,6 +35,6 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold();
   }
 }
