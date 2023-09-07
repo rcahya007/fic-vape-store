@@ -28,8 +28,8 @@ class CurrencyFormat {
   }
 }
 
-// const String urlBase = 'https://fic6-strapi.opwarnet.my.id';
-const String urlBase = 'http://10.0.2.2:1337';
+const String urlBase = 'https://fic6-strapi.opwarnet.my.id';
+// const String urlBase = 'http://10.0.2.2:1337';
 
 class GlobalData {
   static final List widgetOptions = [
