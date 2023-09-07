@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:vape_store/common/global_data.dart';
 import 'package:vape_store/data/datasources/auth_local_datasource.dart';
 import 'package:vape_store/data/models/request/order_request_model.dart';
+import 'package:vape_store/data/models/responses/list_order_response_model.dart';
 import 'package:vape_store/data/models/responses/order_response_model.dart';
 
 class OrderRemoteDatasource {
@@ -20,6 +23,24 @@ class OrderRemoteDatasource {
 
     if (response.statusCode == 200) {
       return Right(OrderResponseModel.fromJson(response.body));
+    } else {
+      return const Left('Server Error');
+    }
+  }
+
+  Future<Either<String, ListOrderResponseModel>> listOrder() async {
+    final authData = await AuthLocalDatasource().getAuthData();
+    final response = await http.get(
+      Uri.parse(
+          '$urlBase/api/orders?populate=id_products&filters[userId][\$eq]=${authData.user.id}&sort=id:desc'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${authData.jwt}',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return Right(ListOrderResponseModel.fromJson(json.decode(response.body)));
     } else {
       return const Left('Server Error');
     }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/list_order/list_order_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
 import 'package:vape_store/data/datasources/auth_local_datasource.dart';
 import 'package:vape_store/data/models/responses/auth_response_model.dart';
@@ -6,6 +8,7 @@ import 'package:vape_store/first_page.dart';
 import 'package:vape_store/presentation/account/widgets/account_settings.dart';
 import 'package:vape_store/presentation/account/widgets/item_section.dart';
 import 'package:vape_store/presentation/auth/login_page.dart';
+import 'package:vape_store/presentation/daftar_order/daftar_order.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -165,6 +168,62 @@ class _AccountPageState extends State<AccountPage> {
                                   fontSize: 18,
                                 ),
                               )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          const Divider(),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Aktivitas saya',
+                                style: poppinsBlack.copyWith(
+                                  fontSize: 18,
+                                  color: colorBlack.withOpacity(0.4),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              ItemSection(
+                                name: 'Daftar Transaksi',
+                                onTap: () {
+                                  if (user != null) {
+                                    context.read<ListOrderBloc>().add(
+                                        const ListOrderEvent.getListOrder());
+                                    Navigator.push(context, MaterialPageRoute(
+                                      builder: (context) {
+                                        return const DaftarOrder();
+                                      },
+                                    ));
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage(),
+                                        ));
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.chevron_right_rounded,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              ItemSection(
+                                name: 'Wishlist',
+                                onTap: () {},
+                                icon: const Icon(
+                                  Icons.chevron_right_rounded,
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(

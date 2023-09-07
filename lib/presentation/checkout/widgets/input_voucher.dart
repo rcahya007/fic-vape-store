@@ -89,7 +89,6 @@ class InputVoucher extends StatelessWidget {
                   border: InputBorder.none,
                 ),
                 onSubmitted: (value) {
-                  print(controllerKodeVoucer.text);
                   context.read<AddVoucherBloc>().add(DoAddVoucherEvent(
                       kodeVoucher: controllerKodeVoucer.text));
                 },
@@ -111,7 +110,6 @@ class InputVoucher extends StatelessWidget {
               ),
             ),
             onSubmitted: (value) {
-              print(controllerKodeVoucer.text);
               context.read<AddVoucherBloc>().add(
                   DoAddVoucherEvent(kodeVoucher: controllerKodeVoucer.text));
             },

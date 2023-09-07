@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vape_store/common/global_data.dart';
+import 'package:vape_store/presentation/search/search_page.dart';
 
 class TopBar extends StatelessWidget {
-  const TopBar({super.key});
+  TopBar({super.key});
+  final TextEditingController searchC = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +77,20 @@ class TopBar extends StatelessWidget {
                         right: 12,
                       ),
                       child: TextField(
+                        controller: searchC,
+                        onSubmitted: (value) {
+                          if (value.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Please enter some text')));
+                          } else {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return SearchPage(search: searchC.text);
+                              },
+                            ));
+                          }
+                        },
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.search),
                           hintStyle: poppinsBlack.copyWith(

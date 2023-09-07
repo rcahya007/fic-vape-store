@@ -35,6 +35,7 @@ class Data {
   final RajaOngkir? rajaOngkir;
   final List<dynamic>? items;
   final int? beratSemuaBarang;
+  final int userId;
 
   Data({
     this.totalPrice,
@@ -48,6 +49,7 @@ class Data {
     this.rajaOngkir,
     this.items,
     this.beratSemuaBarang,
+    required this.userId,
   });
 
   factory Data.fromRawJson(String str) => Data.fromJson(json.decode(str));
@@ -75,6 +77,7 @@ class Data {
             ? []
             : List<dynamic>.from(json["items"]!.map((x) => x)),
         beratSemuaBarang: json["berat_semua_barang"],
+        userId: json['userId'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -91,6 +94,7 @@ class Data {
         "raja_ongkir": rajaOngkir?.toJson(),
         "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x)),
         "berat_semua_barang": beratSemuaBarang,
+        "userId": userId,
       };
 }
 

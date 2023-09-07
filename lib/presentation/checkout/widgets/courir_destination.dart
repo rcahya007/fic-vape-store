@@ -9,6 +9,7 @@ import 'package:vape_store/bloc/get_provinsi_tujuan/get_provinsi_tujuan_bloc.dar
 import 'package:vape_store/bloc/order/order_bloc.dart';
 import 'package:vape_store/common/global_data.dart';
 import 'package:vape_store/common/snap_widget.dart';
+import 'package:vape_store/data/datasources/auth_local_datasource.dart';
 import 'package:vape_store/data/models/request/order_request_model.dart';
 import 'package:vape_store/data/models/responses/courir_response_model.dart';
 import 'package:vape_store/data/models/responses/kota_response_model.dart';
@@ -130,7 +131,6 @@ class CourirDestination extends StatelessWidget {
                 ),
                 onChanged: (value) {
                   if (value != null) {
-                    print(value.province);
                     controllerProvinsiTujuan.text = value.province;
                     context
                         .read<GetKotaTujuanBloc>()
@@ -139,7 +139,6 @@ class CourirDestination extends StatelessWidget {
                         key: 'provinsi_tujuan', value: value.toJson()));
                     showBiayaKurir();
                   } else {
-                    print('Tidak memilih provinsi apapun');
                     controllerKotaTujuan.clear();
                     controllerProvinsiTujuan.clear();
                     idKotaTujuan = '';
@@ -274,15 +273,12 @@ class CourirDestination extends StatelessWidget {
                     idKotaTujuan = value.cityId;
                     context.read<DataCheckoutBloc>().add(GetDataCheckoutEvent(
                         key: 'kota_tujuan', value: value.toJson()));
-                    print(controllerKotaTujuan);
                     showBiayaKurir();
                   } else {
-                    print('Tidak memilih Kota Tujuan apapun');
                     controllerKotaTujuan.clear();
                     idKotaTujuan = '';
                     context.read<DataCheckoutBloc>().add(
                         GetDataCheckoutEvent(key: 'kota_tujuan', value: {}));
-                    print(controllerKotaTujuan);
                     showBiayaKurir();
                   }
                 },
@@ -337,7 +333,6 @@ class CourirDestination extends StatelessWidget {
               controllerBeratBarang.text = dataTotalWeight.toString();
               context.read<DataCheckoutBloc>().add(GetDataCheckoutEvent(
                   key: 'berat_barang', value: dataTotalWeight));
-              print(controllerBeratBarang.text);
               return TextField(
                 enabled: false,
                 focusNode: focusNode,
@@ -434,13 +429,10 @@ class CourirDestination extends StatelessWidget {
               codeCourir = value['code'];
               context.read<DataCheckoutBloc>().add(
                   GetDataCheckoutEvent(key: 'courir_pilihan', value: value));
-              print(controllerCourirPick.text);
               showBiayaKurir();
             } else {
               codeCourir = '';
-              print('Tidak memilih kurir apapun Tujuan apapun');
               controllerCourirPick.clear();
-              print(controllerCourirPick.text);
               context
                   .read<DataCheckoutBloc>()
                   .add(GetDataCheckoutEvent(key: 'courir_pilihan', value: {}));
@@ -530,7 +522,6 @@ class CourirDestination extends StatelessWidget {
                 onChanged: (value) {
                   if (value != null) {
                     isAcc = true;
-                    print(value.service);
                     context.read<DataCheckoutBloc>().add(GetDataCheckoutEvent(
                           key: 'datacosts',
                           value: {
@@ -547,7 +538,6 @@ class CourirDestination extends StatelessWidget {
                         key: 'ongkir', value: value.cost[0].value));
                   } else {
                     isAcc = false;
-                    print('Tidak memilih kurir apapun Tujuan apapun');
                     context
                         .read<DataCheckoutBloc>()
                         .add(GetDataCheckoutEvent(key: 'ongkir', value: 0));
@@ -555,7 +545,6 @@ class CourirDestination extends StatelessWidget {
                           key: 'datacosts',
                           value: {},
                         ));
-                    print(controllerCourirPick.text);
                   }
                 },
                 itemAsString: (item) => dataCourir.code == "pos"
@@ -596,7 +585,6 @@ class CourirDestination extends StatelessWidget {
                   state.dataCheckout['discount'] +
                   state.dataCheckout['ongkir'] +
                   state.dataCheckout['shopping_fee'];
-              print(state.dataCheckout);
               return Column(
                 children: [
                   Row(
@@ -754,11 +742,10 @@ class CourirDestination extends StatelessWidget {
           child: BlocBuilder<DataCheckoutBloc, DataCheckoutState>(
             builder: (context, state) {
               if (state is DataCheckoutLoaded) {
-                print(state.dataCheckout['courir_pilihan']['datacosts']);
-                print(state.dataCheckout['id_products']);
                 return GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (isAcc && state.dataCheckout['shipping_address'] != "") {
+                      final userId = await AuthLocalDatasource().getUserId();
                       final data = Data(
                         totalPrice: state.dataCheckout['total'],
                         deliveryAddress: state.dataCheckout['shipping_address'],
@@ -828,15 +815,14 @@ class CourirDestination extends StatelessWidget {
                         ),
                         items: state.dataCheckout['items'],
                         beratSemuaBarang: state.dataCheckout['berat_barang'],
+                        userId: userId,
                       );
                       final requestModel = OrderRequestModel(data: data);
+                      // ignore: use_build_context_synchronously
                       context
                           .read<OrderBloc>()
                           .add(OrderEvent.doOrder(requestModel));
-                      print('Tap Buat Pesanan');
-                      print(state.dataCheckout['id_products']);
                     } else {
-                      print('Data belum lengkap');
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text(
                           'Data Belum Lengkap',

@@ -28,7 +28,6 @@ class _SnapWidgetState extends State<SnapWidget> {
           //
         },
         onPageStarted: (String url) {
-          print(url);
           if (url.contains('status_code=201&transaction_status=pending')) {
             Navigator.push(
                 context,

@@ -40,7 +40,6 @@ class BottomNavBarMyCart extends StatelessWidget {
                         id: e.id, attributes: e.attributes))
                     .toList();
                 if (signIn && state.items.isNotEmpty) {
-                  print('Pergi Ke Checkout Page');
                   if (context.mounted) {
                     context
                         .read<GetProvinsiAsalBloc>()
@@ -75,15 +74,13 @@ class BottomNavBarMyCart extends StatelessWidget {
                     );
                   }
                 } else if (signIn && state.items.isEmpty) {
-                  print('Cart Kosong');
-
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Keranjang anda masih kosong'),
                     ),
                   );
                 } else {
-                  print('Pergi Ke Login Page karena belom login');
                   if (context.mounted) {
                     Navigator.push(
                         context,

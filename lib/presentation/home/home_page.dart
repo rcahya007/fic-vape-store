@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Column(
           children: [
-            const TopBar(),
+            TopBar(),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
