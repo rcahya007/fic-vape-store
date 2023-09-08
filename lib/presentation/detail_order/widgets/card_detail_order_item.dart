@@ -41,9 +41,24 @@ class CardDetailOrderItem extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.account_box_rounded,
-                size: 60,
+              Container(
+                height: 60,
+                width: 60,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      '$urlBase${dataItem.attributes!.productCover!.data!.attributes!.url}',
+                    ),
+                  ),
+                  border: Border.all(
+                    width: 1,
+                    color: colorBlack,
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    10,
+                  ),
+                ),
               ),
               const SizedBox(
                 width: 10,

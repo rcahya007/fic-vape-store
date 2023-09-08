@@ -1,5 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
 import 'package:vape_store/first_page.dart';
 
 class PaymentSuccessPage extends StatefulWidget {
@@ -20,6 +22,7 @@ class _PaymentSuccessPageState extends State<PaymentSuccessPage> {
         title: 'Payment Success',
         desc: 'Selamat Pembayaran Berhasil dilakukan',
         btnOkOnPress: () {
+          context.read<CheckoutBloc>().add(RemoveAllFromCartEvent());
           Navigator.push(
               context,
               MaterialPageRoute(

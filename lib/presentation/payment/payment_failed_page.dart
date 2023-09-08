@@ -1,5 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vape_store/bloc/checkout/checkout_bloc.dart';
 import 'package:vape_store/first_page.dart';
 
 class PaymentFailedPage extends StatefulWidget {
@@ -20,6 +22,7 @@ class _PaymentFailedPageState extends State<PaymentFailedPage> {
         title: 'Payment Failed',
         desc: 'Maaf Pembayaran anda gagal',
         btnOkOnPress: () {
+          context.read<CheckoutBloc>().add(RemoveAllFromCartEvent());
           Navigator.push(
               context,
               MaterialPageRoute(

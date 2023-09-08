@@ -26,11 +26,24 @@ class DaftarOrder extends StatelessWidget {
           builder: (context, state) {
             return state.maybeWhen(
               orElse: () {
-                return const Center(
-                  child: Text('Data Kosong'),
-                );
+                return const Center(child: CircularProgressIndicator());
               },
               loaded: (data) {
+                if (data.data!.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Text(
+                        'Anda belum melakukan transaksi apapun',
+                        style: poppinsBlack.copyWith(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }
                 return ListView.builder(
                   itemBuilder: (context, index) {
                     final dataOrder = data.data![index];

@@ -32,7 +32,7 @@ class OrderRemoteDatasource {
     final authData = await AuthLocalDatasource().getAuthData();
     final response = await http.get(
       Uri.parse(
-          '$urlBase/api/orders?populate=id_products&filters[userId][\$eq]=${authData.user.id}&sort=id:desc'),
+          '$urlBase/api/orders?populate[id_products][populate][0]=product_cover&filters[userId][\$eq]=${authData.user.id}&sort=id:desc'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authData.jwt}',

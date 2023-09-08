@@ -15,17 +15,12 @@ class TopBarMyCart extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.arrow_back,
-          ),
           Expanded(
-            child: Center(
-              child: Text(
-                'My Cart',
-                style: poppinsBlack.copyWith(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                ),
+            child: Text(
+              'My Cart',
+              style: poppinsBlack.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

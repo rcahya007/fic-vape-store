@@ -56,10 +56,19 @@ class DetailOrder extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Selesai',
+                        dataOrderItem.attributes!.statusOrder ==
+                                "waiting_payment"
+                            ? 'Menunggu Pembayaran'
+                            : dataOrderItem.attributes!.statusOrder ==
+                                    "success_payment"
+                                ? "Selesai"
+                                : dataOrderItem.attributes!.statusOrder ==
+                                        "error_payment"
+                                    ? "Dibatalkan"
+                                    : "",
                         style: poppinsBlack.copyWith(
                           fontWeight: FontWeight.w700,
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                       Text(
@@ -130,7 +139,7 @@ class DetailOrder extends StatelessWidget {
                     child: Container(
                       margin: const EdgeInsetsDirectional.only(
                           start: 1.0, end: 1.0),
-                      height: 5.0,
+                      height: 2.0,
                       color: Colors.grey,
                     ),
                   ),
@@ -193,7 +202,7 @@ class DetailOrder extends StatelessWidget {
                         child: Container(
                           margin: const EdgeInsetsDirectional.only(
                               start: 1.0, end: 1.0),
-                          height: 5.0,
+                          height: 2.0,
                           color: Colors.grey,
                         ),
                       ),
